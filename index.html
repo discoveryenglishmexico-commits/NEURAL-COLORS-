@@ -105,6 +105,7 @@ h2 .grad-gold{background:linear-gradient(90deg,var(--gold),var(--magenta));-webk
 .lb.sust{border-color:rgba(255,201,77,.55);color:var(--gold);background:rgba(255,201,77,.08);text-shadow:0 0 10px rgba(255,201,77,.5)}
 .lb.adj{border-color:rgba(43,255,167,.55);color:var(--green);background:rgba(43,255,167,.08);text-shadow:0 0 10px rgba(43,255,167,.5)}
 .lb.det{border-color:rgba(154,163,199,.5);color:var(--muted);background:rgba(154,163,199,.07)}
+.lb.pa{border-color:rgba(255,165,0,.55);color:#ffb34d;background:rgba(255,165,0,.08);text-shadow:0 0 10px rgba(255,165,0,.5)}
 
 /* FILTROS */
 .lab-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:8px}
@@ -210,7 +211,7 @@ footer a.back:hover{color:#fff;background:rgba(255,201,77,.18);box-shadow:0 0 24
 <header class="hero">
   <div class="kicker">Metodología NFB · Discovery Max Neuroeducation</div>
   <h1 class="glitch" data-text="NEURO-COLORS">NEURO-COLORS</h1>
-  <p class="sub">En la tabla clásica, los colores tienen nombres <strong>de niña o de niño</strong>. En el neuro-laboratorio, cada color tiene un <strong>cuerpo real</strong> —fruta, flor, animal, planta o mineral— y <strong>dos vidas gramaticales</strong>: sustantivo y adjetivo. Tócalos: suenan, brillan y te cuentan sus usos.</p>
+  <p class="sub">En la tabla clásica, los colores tienen nombres <strong>de niña o de niño</strong>. En el neuro-laboratorio, cada color tiene un <strong>cuerpo real</strong> —fruta, flor, animal, planta, mineral u objeto— y <strong>dos vidas gramaticales</strong>: sustantivo y adjetivo. Tócalos: suenan, brillan y te cuentan sus usos.</p>
   <div class="leds" style="margin-top:28px">
     <span class="led c"></span><span class="led m" style="animation-delay:.2s"></span>
     <span class="led g" style="animation-delay:.4s"></span><span class="led v" style="animation-delay:.6s"></span>
@@ -265,6 +266,7 @@ footer a.back:hover{color:#fff;background:rgba(255,201,77,.18);box-shadow:0 0 24
       <span class="lb sf"><span class="lt">S.F.</span>Sustantivo Funcional (acción)</span>
       <span class="lb sust"><span class="lt">SUST</span>Sustantivo · base</span>
       <span class="lb adj"><span class="lt">ADJ</span>Adjetivo · calidad</span>
+      <span class="lb pa"><span class="lt">P.A.</span>Palabra Auxiliar</span>
       <span class="lb det"><span class="lt">DET</span>Determinante</span>
     </div>
   </div>
@@ -365,10 +367,9 @@ function speak(t){if(!audioOn||!synth||!t)return;synth.cancel();
 let actx=null;
 function ac(){if(!actx){try{actx=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}
   if(actx&&actx.state==='suspended')actx.resume();return actx;}
-/* Sonido MÁGICO: campana senoidal + parciales + reverberación por delay con retroalimentación */
 function magicSfx(i){
   if(!audioOn)return;const c=ac();if(!c)return;
-  const scale=[523.25,587.33,659.25,783.99,880.00,1046.50]; /* pentatónica brillante */
+  const scale=[523.25,587.33,659.25,783.99,880.00,1046.50];
   const f=scale[i%scale.length];
   const t=c.currentTime;
   const dl=c.createDelay(1);dl.delayTime.value=.19;
@@ -385,7 +386,7 @@ function magicSfx(i){
     o.connect(g);g.connect(c.destination);g.connect(dl);
     o.start(t);o.stop(t+dur+.1);
   });
-  const s=c.createOscillator(),sg=c.createGain(); /* destello mágico */
+  const s=c.createOscillator(),sg=c.createGain();
   s.type='sine';s.frequency.setValueAtTime(f*4,t);s.frequency.exponentialRampToValueAtTime(f*6,t+.25);
   sg.gain.setValueAtTime(0,t);sg.gain.linearRampToValueAtTime(.02,t+.01);sg.gain.exponentialRampToValueAtTime(.0001,t+.5);
   s.connect(sg);sg.connect(dl);sg.connect(c.destination);s.start(t);s.stop(t+.55);
@@ -406,7 +407,7 @@ audioToggle.addEventListener('click',()=>{
   if(audioOn)tickSfx();
 });
 
-/* ================= ESPECÍMENES DE COLOR ================= */
+/* ================= ESPECÍMENES DE COLOR (34) ================= */
 const ITEMS=[
  {n:"Maraschino",hex:"#E8362A",emo:"🍒",tipo:"FRUTA",esObj:"cereza marrasquino",esCol:"rojo marrasquino"},
  {n:"Cayenne",hex:"#A62B1F",emo:"🌶️",tipo:"VERDURA",esObj:"chile cayena",esCol:"rojo cayena"},
@@ -417,25 +418,43 @@ const ITEMS=[
  {n:"Orchid",hex:"#C77DDE",emo:"🌸",tipo:"FLOR",esObj:"orquídea",esCol:"orquídea / lila rosado"},
  {n:"Lavender",hex:"#A893D0",emo:"🪻",tipo:"FLOR",esObj:"lavanda",esCol:"lavanda"},
  {n:"Strawberry",hex:"#EC4B81",emo:"🍓",tipo:"FRUTA",esObj:"fresa",esCol:"rosa fresa"},
+ {n:"Carnation",hex:"#F27EA9",emo:"💐",tipo:"FLOR",esObj:"clavel",esCol:"rosa clavel"},
  {n:"Bubblegum",hex:"#CE8FCC",emo:"🍬",tipo:"OBJETO",esObj:"chicle",esCol:"rosa chicle",
    ex3:"I chew bubblegum.",bl3:[["PPD","I"],["S.F.","chew"],["SUST","bubblegum"]]},
+ {n:"Magenta",hex:"#E020E0",emo:"🎨",tipo:"OBJETO",esObj:"tinte / tinta magenta",esCol:"magenta",
+   ex3:"I use magenta.",bl3:[["PPD","I"],["S.F.","use"],["SUST","magenta"]]},
+ {n:"Fuchsia",hex:"#C743B8",emo:"🌺",tipo:"FLOR",esObj:"flor de fucsia",esCol:"fucsia"},
  {n:"Salmon",hex:"#E8846B",emo:"🐟",tipo:"ANIMAL",esObj:"salmón",esCol:"rosa salmón"},
  {n:"Tangerine",hex:"#E8871E",emo:"🍊",tipo:"FRUTA",esObj:"mandarina",esCol:"naranja mandarina"},
+ {n:"Orange",hex:"#FFA021",emo:"🍊",tipo:"FRUTA",esObj:"naranja",esCol:"naranja"},
  {n:"Cantaloupe",hex:"#F0C36D",emo:"🍈",tipo:"FRUTA",esObj:"melón cantalupo",esCol:"amarillo melón"},
  {n:"Banana",hex:"#F3E372",emo:"🍌",tipo:"FRUTA",esObj:"banana",esCol:"amarillo banana"},
  {n:"Lemon",hex:"#F6EC4E",emo:"🍋",tipo:"FRUTA",esObj:"limón",esCol:"amarillo limón"},
  {n:"Honeydew",hex:"#D8E3A0",emo:"🍈",tipo:"FRUTA",esObj:"melón honeydew",esCol:"verde melón"},
  {n:"Lime",hex:"#86C232",emo:"🍋",tipo:"FRUTA",esObj:"lima",esCol:"verde lima"},
+ {n:"Spring",hex:"#57C743",emo:"⛲",tipo:"OBJETO",esObj:"manantial / primavera",esCol:"verde primavera",
+   ex3:"I find a spring.",bl3:[["PPD","I"],["S.F.","find"],["SUST","a spring"]]},
  {n:"Clover",hex:"#4C9A44",emo:"🍀",tipo:"PLANTA",esObj:"trébol",esCol:"verde trébol"},
  {n:"Fern",hex:"#61A744",emo:"🌿",tipo:"PLANTA",esObj:"helecho",esCol:"verde helecho"},
+ {n:"Flora",hex:"#8FD08A",emo:"🌼",tipo:"FLOR",esObj:"flora (flores silvestres)",esCol:"verde flora",
+   ex3:"I protect the flora.",bl3:[["PPD","I"],["S.F.","protect"],["SUST","the flora"]]},
  {n:"Moss",hex:"#3D7A35",emo:"🌱",tipo:"PLANTA",esObj:"musgo",esCol:"verde musgo"},
- {n:"Teal",hex:"#3E7C84",emo:"🦆",tipo:"ANIMAL",esObj:"cerceta (pato teal)",esCol:"azul verdoso teal"},
  {n:"Sea Foam",hex:"#8FCBA8",emo:"🌊",tipo:"OBJETO",esObj:"espuma de mar",esCol:"verde espuma de mar",
    ex3:"I see sea foam.",bl3:[["PPD","I"],["S.F.","see"],["SUST","sea foam"]]},
+ {n:"Spindrift",hex:"#9ED3C0",emo:"🫧",tipo:"OBJETO",esObj:"espuma marina al viento",esCol:"verde spindrift",
+   ex3:"I see spindrift.",bl3:[["PPD","I"],["S.F.","see"],["SUST","spindrift"]]},
+ {n:"Teal",hex:"#3E7C84",emo:"🦆",tipo:"ANIMAL",esObj:"cerceta (pato teal)",esCol:"azul verdoso teal"},
  {n:"Turquoise",hex:"#7EC4D4",emo:"💎",tipo:"MINERAL",esObj:"turquesa (piedra)",esCol:"turquesa",
    ex3:"I wear turquoise.",bl3:[["PPD","I"],["S.F.","wear"],["SUST","turquoise"]]},
  {n:"Sky",hex:"#7EC8F2",emo:"☁️",tipo:"OBJETO",esObj:"cielo",esCol:"azul cielo",
-   ex3:"I see the sky.",bl3:[["PPD","I"],["S.F.","see"],["SUST","the sky"]]}
+   ex3:"I see the sky.",bl3:[["PPD","I"],["S.F.","see"],["SUST","the sky"]]},
+ {n:"Silver",hex:"#C0C0C0",emo:"🪙",tipo:"MINERAL",esObj:"plata (metal)",esCol:"plateado",
+   ex3:"I wear silver.",bl3:[["PPD","I"],["S.F.","wear"],["SUST","silver"]]},
+ {n:"Brown",hex:"#8B4513",emo:"🐻",tipo:"ANIMAL",esObj:"oso pardo (brown bear)",esCol:"marrón / café",
+   ex3:"The bear is brown.",bl3:[["SUST","The bear"],["P.A.","is"],["ADJ","brown"]],
+   r3:"ADJETIVO · EN SU CUERPO REAL",cls3:"r-adj"},
+ {n:"Chocolate",hex:"#7B3F00",emo:"🍫",tipo:"OBJETO",esObj:"chocolate",esCol:"color chocolate",
+   ex3:"I eat chocolate.",bl3:[["PPD","I"],["S.F.","eat"],["SUST","chocolate"]]}
 ];
 const INSIGHT={
  "FRUTA":"Doble bloque: la fruta existió primero como sustantivo; el color le tomó prestado el nombre. Por eso <b>lemon, banana, grape</b> se comen y se ven.",
@@ -445,12 +464,12 @@ const INSIGHT={
  "ANIMAL":"El animal prestó su nombre al color: <b>salmon</b> y <b>teal</b> son bloques vivos antes que tonos.",
  "PLANTA":"La planta es el sustantivo; el verde es solo una de sus vidas: la vida adjetivo.",
  "OBJETO":"El objeto real existe como sustantivo; el color es su calidad prestada al ensamblaje.",
- "MINERAL":"El mineral es el bloque base; la piedra y el tono comparten un solo nombre."
+ "MINERAL":"El mineral es el bloque base; la piedra o el metal y el tono comparten un solo nombre."
 };
 const art=n=>/^[aeiou]/i.test(n)?'an':'a';
 const GRUPO=t=>({"FRUTA":"frutas","FRUTO SECO":"frutas","VERDURA":"verduras","FLOR":"flores","ANIMAL":"animales","PLANTA":"plantas","OBJETO":"objetos","MINERAL":"objetos"})[t];
 function use3(it){
-  if(it.ex3)return {r:'SUSTANTIVO · '+it.tipo,d:'El cuerpo real del espécimen como bloque base.',ex:it.ex3,bl:it.bl3};
+  if(it.ex3)return {r:it.r3||('SUSTANTIVO · '+it.tipo),d:'El cuerpo real del espécimen como bloque base.',ex:it.ex3,bl:it.bl3};
   const map={
     "FRUTA":["eat",art(it.n)+' '+it.n.toLowerCase()],
     "FRUTO SECO":["eat",art(it.n)+' '+it.n.toLowerCase()],
@@ -471,7 +490,7 @@ function usesOf(it){
     {r:'SUSTANTIVO · COLOR',cls:'r-sust',d:'El color mismo como bloque base (objeto de la oración).',
      ex:'I like '+it.n.toLowerCase()+'.',
      bl:[["PPD","I"],["S.F.","like"],["SUST",it.n.toLowerCase()]],say:'I like '+it.n.toLowerCase()+'.'},
-    Object.assign(use3(it),{cls:'r-obj'})
+    Object.assign(use3(it),{cls:it.cls3||'r-obj'})
   ];
 }
 
@@ -520,7 +539,7 @@ const bEs=document.getElementById('bEs');
 const bInsight=document.getElementById('bInsight');
 const bUses=document.getElementById('bUses');
 function blkHTML(bl){
-  const cls={PPD:'ppd','S.F.':'sf',SUST:'sust',ADJ:'adj',DET:'det'};
+  const cls={PPD:'ppd','S.F.':'sf',SUST:'sust',ADJ:'adj',DET:'det','P.A.':'pa'};
   return bl.map(function(b,k){return (k>0?'<span class="plus">+</span>':'')+
     '<span class="lb '+(cls[b[0]]||'sust')+'"><span class="lt">'+b[0]+'</span>'+b[1]+'</span>';}).join('');
 }
