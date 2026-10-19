@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEURO-COLORS — El laboratorio de colores con doble vida</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@5/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5/index.css">
+<style>
+:root{
+  --bg:#04050e; --bg2:#080b1c; --panel:#0b0f24; --panel2:#0e1330;
+  --cyan:#00e5ff; --magenta:#ff2fd6; --gold:#ffc94d; --green:#2bffa7; --red:#ff4d6a;
+  --txt:#e8ecff; --muted:#9aa3c7; --line:rgba(0,229,255,.16);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:'Inter',sans-serif;overflow-x:hidden;line-height:1.65}
+::selection{background:var(--magenta);color:#fff}
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none}
+.vignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 50% 0%,transparent 40%,rgba(2,3,10,.75) 100%)}
+.wrap{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:0 24px}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(16px);background:rgba(4,5,14,.72);border-bottom:1px solid var(--line)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.05rem;letter-spacing:.14em;
+  background:linear-gradient(90deg,var(--cyan),var(--magenta),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;white-space:nowrap}
+.logo .zap{color:var(--gold);-webkit-text-fill-color:var(--gold);animation:zapflick 3s infinite}
+@keyframes zapflick{0%,90%,100%{opacity:1}92%{opacity:.2}94%{opacity:1}96%{opacity:.3}}
+.nav-links{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap;align-items:center}
+.nav-links a{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+  text-decoration:none;padding:7px 12px;border-radius:8px;border:1px solid transparent;transition:.3s}
+.nav-links a:hover{color:var(--cyan);border-color:rgba(0,229,255,.35);box-shadow:0 0 14px rgba(0,229,255,.25);text-shadow:0 0 8px var(--cyan)}
+.nav-links a.home{color:var(--gold);border-color:rgba(255,201,77,.45);background:rgba(255,201,77,.07);text-shadow:0 0 8px rgba(255,201,77,.5)}
+.nav-links a.home:hover{color:#fff;border-color:var(--gold);background:rgba(255,201,77,.18);box-shadow:0 0 18px rgba(255,201,77,.45)}
+
+/* LEDS */
+.leds{display:flex;gap:14px;justify-content:center;align-items:center;padding:6px 0}
+.led{width:7px;height:7px;border-radius:50%;background:#1a2040;animation:ledblink 2.4s infinite}
+.led.c{--lc:var(--cyan)} .led.m{--lc:var(--magenta)} .led.g{--lc:var(--gold)} .led.v{--lc:var(--green)}
+@keyframes ledblink{0%,100%{background:#1a2040;box-shadow:none}12%{background:var(--lc);box-shadow:0 0 10px var(--lc),0 0 22px var(--lc)}30%{background:#1a2040;box-shadow:none}}
+
+/* HERO */
+.hero{min-height:92vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;position:relative;padding:140px 24px 60px}
+.kicker{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.5em;text-transform:uppercase;color:var(--cyan);text-shadow:0 0 14px var(--cyan);margin-bottom:14px}
+h1.glitch{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(2.6rem,8vw,5.4rem);letter-spacing:.04em;line-height:1.02;position:relative;
+  background:linear-gradient(92deg,#fff 10%,var(--cyan) 45%,var(--magenta) 75%,var(--gold) 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+h1.glitch::before,h1.glitch::after{content:attr(data-text);position:absolute;inset:0;background:inherit;-webkit-background-clip:text;background-clip:text;color:transparent;opacity:.7}
+h1.glitch::before{animation:gl1 5s infinite;clip-path:inset(20% 0 55% 0)}
+h1.glitch::after{animation:gl2 5s infinite;clip-path:inset(60% 0 12% 0)}
+@keyframes gl1{0%,93%,100%{transform:none}94%{transform:translate(-6px,2px)}96%{transform:translate(5px,-2px)}98%{transform:translate(-3px,1px)}}
+@keyframes gl2{0%,93%,100%{transform:none}95%{transform:translate(6px,-2px)}97%{transform:translate(-5px,2px)}}
+.hero p.sub{max-width:760px;margin:22px auto 0;color:var(--muted);font-size:clamp(1rem,2vw,1.16rem)}
+.hero p.sub strong{color:var(--gold);text-shadow:0 0 10px rgba(255,201,77,.5)}
+.cta-row{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:36px}
+.btn-neon{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:.82rem;padding:16px 32px;border-radius:12px;
+  cursor:pointer;text-decoration:none;position:relative;overflow:hidden;transition:.35s;border:1px solid var(--cyan);color:var(--cyan);background:rgba(0,229,255,.05)}
+.btn-neon::after{content:'';position:absolute;top:0;left:-120%;width:60%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.28),transparent);transition:.6s}
+.btn-neon:hover::after{left:130%}
+.btn-neon:hover{color:#fff;background:rgba(0,229,255,.16);box-shadow:0 0 24px rgba(0,229,255,.55),inset 0 0 16px rgba(0,229,255,.2);text-shadow:0 0 10px var(--cyan);transform:translateY(-3px)}
+.btn-neon.gold{border-color:var(--gold);color:var(--gold);background:rgba(255,201,77,.05)}
+.btn-neon.gold:hover{background:rgba(255,201,77,.16);color:#fff;text-shadow:0 0 10px var(--gold);box-shadow:0 0 24px rgba(255,201,77,.55)}
+.scroll-hint{margin-top:48px;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.3em;animation:bob 2s infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+/* SECTIONS */
+section{padding:90px 0;position:relative}
+.sec-head{margin-bottom:40px}
+.sec-num{font-family:'JetBrains Mono',monospace;font-size:.75rem;letter-spacing:.4em;color:var(--magenta);text-shadow:0 0 12px var(--magenta);display:block;margin-bottom:10px}
+h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.7rem,4.4vw,2.6rem);line-height:1.15}
+h2 .grad{background:linear-gradient(90deg,var(--cyan),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2 .grad-gold{background:linear-gradient(90deg,var(--gold),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sec-head p{color:var(--muted);max-width:780px;margin-top:14px}
+.reveal{opacity:0;transform:translateY(36px);transition:opacity .8s ease,transform .8s ease}
+.reveal.visible{opacity:1;transform:none}
+.divider{display:flex;align-items:center;gap:16px;margin:0 auto;max-width:900px;padding:10px 0}
+.divider .line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent)}
+
+/* PANELS / CALLOUTS */
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
+.panel{background:linear-gradient(160deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:18px;padding:28px;position:relative;overflow:hidden;transition:.4s}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),var(--magenta),transparent);opacity:.55;transition:.4s}
+.panel:hover{border-color:rgba(0,229,255,.45);transform:translateY(-4px);box-shadow:0 14px 44px rgba(0,229,255,.12)}
+.panel:hover::before{opacity:1;box-shadow:0 0 16px var(--cyan)}
+.num-badge{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:16px;
+  background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.4);color:var(--cyan);text-shadow:0 0 10px var(--cyan);box-shadow:inset 0 0 14px rgba(0,229,255,.12)}
+.callout{border-radius:16px;padding:24px 26px;margin:26px 0 0;border:1px solid;position:relative}
+.callout .ico{font-size:1.3rem;margin-right:10px}
+.callout h4{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;margin-bottom:8px;color:#fff}
+.callout p{color:var(--muted);font-size:.94rem}
+.callout strong{color:var(--txt)}
+.callout.shock{border-color:rgba(255,47,214,.5);background:linear-gradient(140deg,rgba(255,47,214,.09),rgba(11,15,36,.6));animation:shockglow 3.4s infinite}
+@keyframes shockglow{0%,100%{box-shadow:0 0 22px rgba(255,47,214,.1)}50%{box-shadow:0 0 44px rgba(255,47,214,.28)}}
+.callout.cy{border-color:rgba(0,229,255,.4);background:linear-gradient(140deg,rgba(0,229,255,.07),rgba(11,15,36,.6)}
+.callout.gold{border-color:rgba(255,201,77,.45);background:linear-gradient(140deg,rgba(255,201,77,.08),rgba(11,15,36,.6)}
+
+/* LEGENDA DE BLOQUES */
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+.lb{font-family:'JetBrains Mono',monospace;font-size:.74rem;font-weight:700;padding:8px 13px;border-radius:9px;border:1px solid;cursor:default;transition:.25s}
+.lb .lt{display:block;font-size:.52rem;letter-spacing:.16em;opacity:.85;font-weight:400}
+.lb:hover{transform:translateY(-2px)}
+.lb.ppd{border-color:rgba(0,229,255,.55);color:var(--cyan);background:rgba(0,229,255,.08);text-shadow:0 0 10px rgba(0,229,255,.5)}
+.lb.sf{border-color:rgba(255,47,214,.55);color:var(--magenta);background:rgba(255,47,214,.08);text-shadow:0 0 10px rgba(255,47,214,.5)}
+.lb.sust{border-color:rgba(255,201,77,.55);color:var(--gold);background:rgba(255,201,77,.08);text-shadow:0 0 10px rgba(255,201,77,.5)}
+.lb.adj{border-color:rgba(43,255,167,.55);color:var(--green);background:rgba(43,255,167,.08);text-shadow:0 0 10px rgba(43,255,167,.5)}
+.lb.det{border-color:rgba(154,163,199,.5);color:var(--muted);background:rgba(154,163,199,.07)}
+
+/* FILTROS */
+.lab-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:8px}
+.audio-toggle{font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.14em;padding:9px 16px;border-radius:10px;border:1px solid rgba(43,255,167,.5);
+  color:var(--green);background:rgba(43,255,167,.07);cursor:pointer;transition:.3s;margin-left:auto;white-space:nowrap;text-shadow:0 0 8px rgba(43,255,167,.5)}
+.audio-toggle:hover{box-shadow:0 0 16px rgba(43,255,167,.45);transform:translateY(-2px)}
+.audio-toggle.off{border-color:rgba(255,77,106,.5);color:var(--red);background:rgba(255,77,106,.07);text-shadow:0 0 8px rgba(255,77,106,.5)}
+.fil-row{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 26px}
+.fil{font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:700;padding:9px 16px;border-radius:10px;border:1px solid rgba(0,229,255,.35);
+  background:rgba(0,229,255,.05);color:var(--cyan);cursor:pointer;transition:.3s}
+.fil:hover{box-shadow:0 0 16px rgba(0,229,255,.4);transform:translateY(-2px)}
+.fil.sel{background:rgba(255,47,214,.16);border-color:var(--magenta);color:#fff;text-shadow:0 0 8px var(--magenta);box-shadow:0 0 20px rgba(255,47,214,.5)}
+
+/* PODS DE COLOR */
+.pod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:18px}
+.pod{border-radius:16px;border:1px solid var(--line);background:linear-gradient(160deg,var(--panel2),var(--bg2));overflow:hidden;cursor:pointer;transition:.35s;position:relative}
+.pod .sw{height:66px;background:var(--pc);position:relative;box-shadow:inset 0 -16px 26px rgba(0,0,0,.28)}
+.pod .sw::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.4) 50%,transparent 70%);transform:translateX(-130%);transition:.7s}
+.pod:hover .sw::after{transform:translateX(130%)}
+.pod .sw .emo{position:absolute;right:10px;bottom:5px;font-size:1.8rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.5));transition:.35s}
+.pod:hover .sw .emo{transform:scale(1.3) rotate(-10deg)}
+.pod .body{padding:14px 16px 16px}
+.pod .nm{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.06rem;color:#fff}
+.pod .hex{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--muted);letter-spacing:.1em}
+.pod .es{font-size:.74rem;color:var(--muted);margin-top:4px}
+.pod .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.mini-tag{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.12em;padding:4px 8px;border-radius:6px;border:1px solid;text-transform:uppercase}
+.t-tipo{color:var(--pc);border-color:color-mix(in srgb,var(--pc) 55%,transparent);background:color-mix(in srgb,var(--pc) 10%,transparent);text-shadow:0 0 8px var(--pc)}
+.t-adj{color:var(--green);border-color:rgba(43,255,167,.4)}
+.t-sust{color:var(--gold);border-color:rgba(255,201,77,.4)}
+.pod:hover{transform:translateY(-6px);border-color:var(--pc);
+  box-shadow:0 14px 40px color-mix(in srgb,var(--pc) 22%,transparent),0 0 22px color-mix(in srgb,var(--pc) 32%,transparent)}
+.pod.sel{border-color:var(--pc);box-shadow:0 0 0 1px var(--pc),0 0 32px color-mix(in srgb,var(--pc) 42%,transparent)}
+.pod.hide{display:none}
+
+/* BANCO DE ANÁLISIS */
+.bench{margin-top:34px;border-radius:22px;border:1px solid var(--line);background:linear-gradient(160deg,#0d1230,#070a1a);padding:32px;position:relative;overflow:hidden;
+  box-shadow:0 0 50px rgba(0,229,255,.06)}
+.bench.zap{animation:zapin .55s}
+@keyframes zapin{0%{box-shadow:0 0 0 rgba(0,229,255,0)}30%{box-shadow:0 0 46px color-mix(in srgb,var(--bc,var(--cyan)) 55%,transparent),inset 0 0 30px color-mix(in srgb,var(--bc,var(--cyan)) 18%,transparent)}100%{box-shadow:0 0 50px rgba(0,229,255,.06)}}
+.bench-grid{display:grid;grid-template-columns:auto 1fr;gap:30px;align-items:start}
+.bench-swatch{width:150px;height:150px;border-radius:26px;background:var(--bc,#141a35);display:flex;align-items:center;justify-content:center;font-size:3.6rem;
+  box-shadow:0 0 44px color-mix(in srgb,var(--bc,#141a35) 45%,transparent),inset 0 -20px 32px rgba(0,0,0,.32);transition:.4s}
+.bench-swatch.idle{font-size:2.4rem;box-shadow:none;border:1px dashed var(--line)}
+.bench-nm{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.6rem,4vw,2.4rem);color:#fff;line-height:1.1}
+.bench-meta{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.bm{font-family:'JetBrains Mono',monospace;font-size:.66rem;padding:5px 11px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.bm b{color:var(--txt)}
+.bench-es{color:var(--muted);font-size:.9rem}
+.bench-es b{color:var(--gold)}
+.insight-line{margin-top:12px;font-size:.88rem;color:var(--txt);border-left:3px solid var(--bc,var(--cyan));padding-left:14px}
+.uses{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:24px}
+.use-card{border:1px solid var(--line);border-radius:14px;padding:18px;background:rgba(255,255,255,.02);transition:.3s;position:relative}
+.use-card:hover{border-color:color-mix(in srgb,var(--bc,var(--cyan)) 50%,transparent);transform:translateY(-3px);
+  box-shadow:0 10px 30px color-mix(in srgb,var(--bc,var(--cyan)) 14%,transparent)}
+.use-role{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.16em;padding:5px 11px;border-radius:999px;border:1px solid;display:inline-block;margin-bottom:10px;text-transform:uppercase}
+.r-adj{color:var(--green);border-color:rgba(43,255,167,.45);background:rgba(43,255,167,.06)}
+.r-sust{color:var(--gold);border-color:rgba(255,201,77,.45);background:rgba(255,201,77,.06)}
+.r-obj{color:var(--cyan);border-color:rgba(0,229,255,.45);background:rgba(0,229,255,.06)}
+.use-card p{color:var(--muted);font-size:.82rem;margin-bottom:8px}
+.use-ex{font-family:'JetBrains Mono',monospace;font-size:.9rem;color:var(--txt);margin-bottom:4px}
+.blk-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.plus{color:var(--green);font-weight:700;text-shadow:0 0 10px rgba(43,255,167,.6)}
+.say-btn{position:absolute;top:14px;right:14px;font-family:'JetBrains Mono',monospace;font-size:.66rem;padding:7px 12px;border-radius:9px;cursor:pointer;
+  border:1px solid rgba(43,255,167,.45);background:rgba(43,255,167,.08);color:var(--green);transition:.3s;text-shadow:0 0 8px rgba(43,255,167,.5)}
+.say-btn:hover{box-shadow:0 0 16px rgba(43,255,167,.5);transform:translateY(-2px);background:rgba(43,255,167,.16)}
+.audio-hint{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--green);opacity:.85;border:1px dashed rgba(43,255,167,.35);border-radius:8px;padding:6px 10px;display:inline-block;margin-top:10px}
+
+footer{border-top:1px solid var(--line);padding:52px 24px 40px;text-align:center;position:relative;z-index:2;background:linear-gradient(180deg,transparent,rgba(8,11,28,.9))}
+footer .f-logo{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:.2em;font-size:1rem;
+  background:linear-gradient(90deg,var(--cyan),var(--magenta),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+footer p{color:var(--muted);font-size:.8rem;margin-top:12px;font-family:'JetBrains Mono',monospace;letter-spacing:.06em}
+footer a.back{display:inline-block;margin-top:22px;font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;
+  padding:13px 26px;border-radius:11px;color:var(--gold);border:1px solid rgba(255,201,77,.5);background:rgba(255,201,77,.07);transition:.3s;text-shadow:0 0 8px rgba(255,201,77,.5)}
+footer a.back:hover{color:#fff;background:rgba(255,201,77,.18);box-shadow:0 0 24px rgba(255,201,77,.5);transform:translateY(-3px)}
+
+@media(max-width:860px){
+  .bench-grid{grid-template-columns:1fr}
+  .bench-swatch{width:110px;height:110px;font-size:2.6rem}
+  .nav-links a:not(.home){display:none}
+  section{padding:64px 0}
+}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+<div class="vignette"></div>
+
+<nav>
+  <div class="nav-inner">
+    <div class="logo"><span class="zap">⚡</span> NEURO-COLORS</div>
+    <div class="nav-links">
+      <a class="home" href="index.html">← INICIO</a>
+      <a href="shocking-pronouns.html">Shocking Pronouns</a>
+      <a href="#vidas">Doble vida</a>
+      <a href="#lab">Laboratorio</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="kicker">Metodología NFB · Discovery Max Neuroeducation</div>
+  <h1 class="glitch" data-text="NEURO-COLORS">NEURO-COLORS</h1>
+  <p class="sub">En la tabla clásica, los colores tienen nombres <strong>de niña o de niño</strong>. En el neuro-laboratorio, cada color tiene un <strong>cuerpo real</strong> —fruta, flor, animal, planta o mineral— y <strong>dos vidas gramaticales</strong>: sustantivo y adjetivo. Tócalos: suenan, brillan y te cuentan sus usos.</p>
+  <div class="leds" style="margin-top:28px">
+    <span class="led c"></span><span class="led m" style="animation-delay:.2s"></span>
+    <span class="led g" style="animation-delay:.4s"></span><span class="led v" style="animation-delay:.6s"></span>
+    <span class="led c" style="animation-delay:.8s"></span><span class="led m" style="animation-delay:1s"></span>
+    <span class="led g" style="animation-delay:1.2s"></span>
+  </div>
+  <div class="cta-row">
+    <a href="#lab" class="btn-neon">🧪 Entrar al laboratorio</a>
+    <a href="index.html" class="btn-neon gold">← Volver a Discovery Max</a>
+  </div>
+  <div class="scroll-hint">▼ SCROLL ▼</div>
+</header>
+
+<main class="wrap">
+
+<!-- ============ DOBLE VIDA ============ -->
+<section id="vidas" class="reveal">
+  <div class="sec-head">
+    <span class="sec-num">// MÓDULO 01 · LA DOBLE VIDA DE UN COLOR</span>
+    <h2>Un color no es un color: <span class="grad">es un bloque con dos vidas</span></h2>
+    <p>En el ensamblaje Lego del inglés, ninguna palabra se conjuga: las palabras son <strong style="color:var(--cyan)">bloques estáticos</strong> que cambian de función según su posición. Por eso <em style="color:var(--gold)">lemon</em> no es solo "amarillo limón": es un <strong>limón real</strong> (sustantivo) y una <strong>calidad</strong> (adjetivo). El mismo bloque, dos vidas.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <div class="num-badge" style="border-color:rgba(43,255,167,.5);color:var(--green);background:rgba(43,255,167,.08);text-shadow:0 0 10px var(--green)">A</div>
+      <h4 style="font-family:'Space Grotesk';font-size:1.1rem;margin-bottom:10px">Vida 1 · ADJETIVO (calidad estática)</h4>
+      <p style="color:var(--muted);font-size:.9rem;margin-bottom:10px">El bloque de color se coloca <strong style="color:var(--txt)">antes del sustantivo</strong> y lo describe. No cambia de forma: nunca se conjuga.</p>
+      <div class="blk-row">
+        <span class="lb det"><span class="lt">DET</span>A</span><span class="plus">+</span>
+        <span class="lb adj"><span class="lt">ADJ</span>lemon</span><span class="plus">+</span>
+        <span class="lb sust"><span class="lt">SUST</span>curtain</span>
+      </div>
+    </div>
+    <div class="panel" style="border-color:rgba(255,201,77,.35)">
+      <div class="num-badge" style="border-color:rgba(255,201,77,.5);color:var(--gold);background:rgba(255,201,77,.08);text-shadow:0 0 10px var(--gold)">S</div>
+      <h4 style="font-family:'Space Grotesk';font-size:1.1rem;margin-bottom:10px">Vida 2 · SUSTANTIVO (cuerpo real)</h4>
+      <p style="color:var(--muted);font-size:.9rem;margin-bottom:10px">El mismo bloque es la <strong style="color:var(--txt)">fruta, flor, animal o mineral</strong>: un sustantivo base que puede ser objeto de la oración… o el color mismo como concepto.</p>
+      <div class="blk-row">
+        <span class="lb ppd"><span class="lt">PPD</span>I</span><span class="plus">+</span>
+        <span class="lb sf"><span class="lt">S.F.</span>eat</span><span class="plus">+</span>
+        <span class="lb sust"><span class="lt">SUST</span>a lemon</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout cy">
+    <h4><span class="ico">🧱</span>Leyenda del ensamblaje</h4>
+    <p>Cada ejemplo del laboratorio se muestra como bloques Lego: así ves la <strong>función gramatical</strong> de cada palabra, no solo su traducción.</p>
+    <div class="legend">
+      <span class="lb ppd"><span class="lt">PPD</span>Pronombre · botón PLAY</span>
+      <span class="lb sf"><span class="lt">S.F.</span>Sustantivo Funcional (acción)</span>
+      <span class="lb sust"><span class="lt">SUST</span>Sustantivo · base</span>
+      <span class="lb adj"><span class="lt">ADJ</span>Adjetivo · calidad</span>
+      <span class="lb det"><span class="lt">DET</span>Determinante</span>
+    </div>
+  </div>
+
+  <div class="callout shock">
+    <h4><span class="ico">⚡</span>El choque hispano</h4>
+    <p>Tu cerebro busca "el verbo" y una traducción única: <em>limón = lemon</em>. Pero <strong>lemon</strong> puede ser el color de una cortina, la fruta en tu mano o el nombre del bloque entero. <strong>No traduzcas la palabra: reconoce su posición.</strong> La posición es la que enciende su vida gramatical.</p>
+  </div>
+</section>
+
+<div class="divider reveal"><span class="led m"></span><div class="line"></div><span class="led c" style="animation-delay:.5s"></span><div class="line"></div><span class="led g" style="animation-delay:1s"></span></div>
+
+<!-- ============ LABORATORIO ============ -->
+<section id="lab" class="reveal">
+  <div class="sec-head">
+    <span class="sec-num">// MÓDULO 02 · NEURO-LABORATORIO DE ESPECÍMENES</span>
+    <h2>Toca un espécimen: <span class="grad-gold">escucha su magia</span></h2>
+    <p>Cada cápsula es un espécimen vivo del idioma. Al pulsarla emite un <strong style="color:var(--green)">sonido suave y reverberante</strong>, pronuncia su nombre en inglés y abre su ficha: sus dos vidas gramaticales y sus usos más allá del color.</p>
+    <span class="audio-hint">🎧 Sonido mágico + voz del navegador en inglés. Usa audífonos para sentir la reverberación.</span>
+  </div>
+
+  <div class="lab-head">
+    <h3 style="margin:0;color:#fff;font-family:'Space Grotesk'">Filtrar por cuerpo real</h3>
+    <button id="audioToggle" class="audio-toggle" title="Activar o silenciar audio">🔊 AUDIO ON</button>
+  </div>
+  <div class="fil-row" id="filRow"></div>
+
+  <div class="pod-grid" id="podGrid"></div>
+
+  <div class="bench" id="bench">
+    <div class="bench-grid">
+      <div class="bench-swatch idle" id="bSwatch">🧪</div>
+      <div>
+        <div class="bench-nm" id="bName">Esperando espécimen…</div>
+        <div class="bench-meta" id="bMeta"></div>
+        <div class="bench-es" id="bEs">Pulsa cualquier cápsula de color para analizar sus dos vidas gramaticales y escuchar su sonido mágico.</div>
+        <div class="insight-line" id="bInsight" style="display:none"></div>
+      </div>
+    </div>
+    <div class="uses" id="bUses"></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="leds" style="margin-bottom:24px">
+    <span class="led c"></span><span class="led m" style="animation-delay:.3s"></span>
+    <span class="led g" style="animation-delay:.6s"></span><span class="led v" style="animation-delay:.9s"></span>
+  </div>
+  <div class="f-logo">⚡ NEURO-COLORS</div>
+  <p>Metodología NFB · Discovery Max Neuroeducation · Los colores también se ensamblan</p>
+  <a class="back" href="index.html">← Volver al inicio · Discovery Max</a>
+</footer>
+
+<script>
+/* ================= PARTÍCULAS ================= */
+(function(){
+  const cv=document.getElementById('particles'),ctx=cv.getContext('2d');
+  let W,H,parts=[];
+  const COLORS=['rgba(0,229,255,','rgba(255,47,214,','rgba(255,201,77,','rgba(43,255,167,'];
+  function resize(){W=cv.width=innerWidth;H=cv.height=innerHeight}
+  resize();addEventListener('resize',resize);
+  for(let i=0;i<60;i++){
+    parts.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+.5,
+      vy:-(Math.random()*.35+.08),vx:(Math.random()-.5)*.2,
+      c:COLORS[Math.floor(Math.random()*COLORS.length)],a:Math.random(),da:(Math.random()*.02+.005)});
+  }
+  (function tick(){
+    ctx.clearRect(0,0,W,H);
+    parts.forEach(p=>{
+      p.y+=p.vy;p.x+=p.vx;p.a+=p.da;
+      if(p.a>1||p.a<0)p.da*=-1;
+      if(p.y<-10){p.y=H+10;p.x=Math.random()*W}
+      if(p.x<-10)p.x=W+10;if(p.x>W+10)p.x=-10;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.c+(Math.abs(p.a)*.7)+')';
+      ctx.shadowBlur=10;ctx.shadowColor=p.c+'.6)';
+      ctx.fill();ctx.shadowBlur=0;
+    });
+    requestAnimationFrame(tick);
+  })();
+})();
+
+/* ================= REVEAL ================= */
+const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')})},{threshold:.08});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* ================= AUDIO: voz + sonido mágico reverberante ================= */
+let audioOn=true;
+const synth=('speechSynthesis' in window)?window.speechSynthesis:null;
+let enVoice=null;
+function pickVoice(){if(!synth)return;const vs=synth.getVoices();
+  enVoice=vs.find(v=>/en[-_]US/i.test(v.lang))||vs.find(v=>v.lang.startsWith('en'))||null;}
+if(synth){pickVoice();synth.onvoiceschanged=pickVoice;}
+function speak(t){if(!audioOn||!synth||!t)return;synth.cancel();
+  const u=new SpeechSynthesisUtterance(t);u.lang='en-US';if(enVoice)u.voice=enVoice;u.rate=.92;synth.speak(u);}
+let actx=null;
+function ac(){if(!actx){try{actx=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}
+  if(actx&&actx.state==='suspended')actx.resume();return actx;}
+/* Sonido MÁGICO: campana senoidal + parciales + reverberación por delay con retroalimentación */
+function magicSfx(i){
+  if(!audioOn)return;const c=ac();if(!c)return;
+  const scale=[523.25,587.33,659.25,783.99,880.00,1046.50]; /* pentatónica brillante */
+  const f=scale[i%scale.length];
+  const t=c.currentTime;
+  const dl=c.createDelay(1);dl.delayTime.value=.19;
+  const fb=c.createGain();fb.gain.value=.42;
+  const lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2600;
+  dl.connect(lp);lp.connect(fb);fb.connect(dl);
+  const wet=c.createGain();wet.gain.value=.5;dl.connect(wet);wet.connect(c.destination);
+  [[1,.09,1.6],[2,.035,1.3],[3.01,.015,1.0]].forEach(([m,v,dur])=>{
+    const o=c.createOscillator(),g=c.createGain();
+    o.type='sine';o.frequency.value=f*m;
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.02);
+    g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.connect(g);g.connect(c.destination);g.connect(dl);
+    o.start(t);o.stop(t+dur+.1);
+  });
+  const s=c.createOscillator(),sg=c.createGain(); /* destello mágico */
+  s.type='sine';s.frequency.setValueAtTime(f*4,t);s.frequency.exponentialRampToValueAtTime(f*6,t+.25);
+  sg.gain.setValueAtTime(0,t);sg.gain.linearRampToValueAtTime(.02,t+.01);sg.gain.exponentialRampToValueAtTime(.0001,t+.5);
+  s.connect(sg);sg.connect(dl);sg.connect(c.destination);s.start(t);s.stop(t+.55);
+}
+function tickSfx(){
+  if(!audioOn)return;const c=ac();if(!c)return;
+  const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=700;
+  const t=c.currentTime;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.03,t+.01);
+  g.gain.exponentialRampToValueAtTime(.0001,t+.14);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+.16);
+}
+const audioToggle=document.getElementById('audioToggle');
+audioToggle.addEventListener('click',()=>{
+  audioOn=!audioOn;
+  audioToggle.classList.toggle('off',!audioOn);
+  audioToggle.textContent=audioOn?'🔊 AUDIO ON':'🔇 AUDIO OFF';
+  if(!audioOn&&synth)synth.cancel();
+  if(audioOn)tickSfx();
+});
+
+/* ================= ESPECÍMENES DE COLOR ================= */
+const ITEMS=[
+ {n:"Maraschino",hex:"#E8362A",emo:"🍒",tipo:"FRUTA",esObj:"cereza marrasquino",esCol:"rojo marrasquino"},
+ {n:"Cayenne",hex:"#A62B1F",emo:"🌶️",tipo:"VERDURA",esObj:"chile cayena",esCol:"rojo cayena"},
+ {n:"Maroon",hex:"#7E1F3D",emo:"🌰",tipo:"FRUTO SECO",esObj:"castaña (maroon original)",esCol:"granate / marrón rojizo"},
+ {n:"Plum",hex:"#5B2E72",emo:"🫐",tipo:"FRUTA",esObj:"ciruela",esCol:"morado ciruela"},
+ {n:"Eggplant",hex:"#50315E",emo:"🍆",tipo:"VERDURA",esObj:"berenjena",esCol:"color berenjena"},
+ {n:"Grape",hex:"#6F4E9C",emo:"🍇",tipo:"FRUTA",esObj:"uva",esCol:"morado uva"},
+ {n:"Orchid",hex:"#C77DDE",emo:"🌸",tipo:"FLOR",esObj:"orquídea",esCol:"orquídea / lila rosado"},
+ {n:"Lavender",hex:"#A893D0",emo:"🪻",tipo:"FLOR",esObj:"lavanda",esCol:"lavanda"},
+ {n:"Strawberry",hex:"#EC4B81",emo:"🍓",tipo:"FRUTA",esObj:"fresa",esCol:"rosa fresa"},
+ {n:"Bubblegum",hex:"#CE8FCC",emo:"🍬",tipo:"OBJETO",esObj:"chicle",esCol:"rosa chicle",
+   ex3:"I chew bubblegum.",bl3:[["PPD","I"],["S.F.","chew"],["SUST","bubblegum"]]},
+ {n:"Salmon",hex:"#E8846B",emo:"🐟",tipo:"ANIMAL",esObj:"salmón",esCol:"rosa salmón"},
+ {n:"Tangerine",hex:"#E8871E",emo:"🍊",tipo:"FRUTA",esObj:"mandarina",esCol:"naranja mandarina"},
+ {n:"Cantaloupe",hex:"#F0C36D",emo:"🍈",tipo:"FRUTA",esObj:"melón cantalupo",esCol:"amarillo melón"},
+ {n:"Banana",hex:"#F3E372",emo:"🍌",tipo:"FRUTA",esObj:"banana",esCol:"amarillo banana"},
+ {n:"Lemon",hex:"#F6EC4E",emo:"🍋",tipo:"FRUTA",esObj:"limón",esCol:"amarillo limón"},
+ {n:"Honeydew",hex:"#D8E3A0",emo:"🍈",tipo:"FRUTA",esObj:"melón honeydew",esCol:"verde melón"},
+ {n:"Lime",hex:"#86C232",emo:"🍋🟩",tipo:"FRUTA",esObj:"lima",esCol:"verde lima"},
+ {n:"Clover",hex:"#4C9A44",emo:"🍀",tipo:"PLANTA",esObj:"trébol",esCol:"verde trébol"},
+ {n:"Fern",hex:"#61A744",emo:"🌿",tipo:"PLANTA",esObj:"helecho",esCol:"verde helecho"},
+ {n:"Moss",hex:"#3D7A35",emo:"🌱",tipo:"PLANTA",esObj:"musgo",esCol:"verde musgo"},
+ {n:"Teal",hex:"#3E7C84",emo:"🦆",tipo:"ANIMAL",esObj:"cerceta (pato teal)",esCol:"azul verdoso teal"},
+ {n:"Sea Foam",hex:"#8FCBA8",emo:"🌊",tipo:"OBJETO",esObj:"espuma de mar",esCol:"verde espuma de mar",
+   ex3:"I see sea foam.",bl3:[["PPD","I"],["S.F.","see"],["SUST","sea foam"]]},
+ {n:"Turquoise",hex:"#7EC4D4",emo:"💎",tipo:"MINERAL",esObj:"turquesa (piedra)",esCol:"turquesa",
+   ex3:"I wear turquoise.",bl3:[["PPD","I"],["S.F.","wear"],["SUST","turquoise"]]},
+ {n:"Sky",hex:"#7EC8F2",emo:"☁️",tipo:"OBJETO",esObj:"cielo",esCol:"azul cielo",
+   ex3:"I see the sky.",bl3:[["PPD","I"],["S.F.","see"],["SUST","the sky"]]}
+];
+const INSIGHT={
+ "FRUTA":"Doble bloque: la fruta existió primero como sustantivo; el color le tomó prestado el nombre. Por eso <b>lemon, banana, grape</b> se comen y se ven.",
+ "FRUTO SECO":"El fruto seco es el cuerpo original del bloque; el color heredó su nombre y su profundidad.",
+ "VERDURA":"La verdura es el sustantivo base; como adjetivo, el mismo bloque pinta sustantivos sin cambiar de forma.",
+ "FLOR":"La flor es el cuerpo real; el color es la calidad que tu ojo presta al sustantivo siguiente.",
+ "ANIMAL":"El animal prestó su nombre al color: <b>salmon</b> y <b>teal</b> son bloques vivos antes que tonos.",
+ "PLANTA":"La planta es el sustantivo; el verde es solo una de sus vidas: la vida adjetivo.",
+ "OBJETO":"El objeto real existe como sustantivo; el color es su calidad prestada al ensamblaje.",
+ "MINERAL":"El mineral es el bloque base; la piedra y el tono comparten un solo nombre."
+};
+const art=n=>/^[aeiou]/i.test(n)?'an':'a';
+const GRUPO=t=>({"FRUTA":"frutas","FRUTO SECO":"frutas","VERDURA":"verduras","FLOR":"flores","ANIMAL":"animales","PLANTA":"plantas","OBJETO":"objetos","MINERAL":"objetos"})[t];
+function use3(it){
+  if(it.ex3)return {r:'SUSTANTIVO · '+it.tipo,d:'El cuerpo real del espécimen como bloque base.',ex:it.ex3,bl:it.bl3};
+  const map={
+    "FRUTA":["eat",art(it.n)+' '+it.n.toLowerCase()],
+    "FRUTO SECO":["eat",art(it.n)+' '+it.n.toLowerCase()],
+    "VERDURA":["cook",art(it.n)+' '+it.n.toLowerCase()],
+    "FLOR":["smell",'the '+it.n.toLowerCase()],
+    "ANIMAL":["see",art(it.n)+' '+it.n.toLowerCase()],
+    "PLANTA":["touch",'the '+it.n.toLowerCase()]
+  }[it.tipo];
+  return {r:'SUSTANTIVO · '+it.tipo,d:'El cuerpo real del espécimen como bloque base.',
+    ex:`I ${map[0]} ${map[1]}.`,bl:[["PPD","I"],["S.F.",map[0]],["SUST",map[1]]]};
+}
+function usesOf(it){
+  const a=art(it.n);
+  return [
+    {r:'ADJETIVO · COLOR',cls:'r-adj',d:'Calidad estática antes del sustantivo: describe sin conjugarse.',
+     ex:`${a.charAt(0).toUpperCase()+a.slice(1)} ${it.n.toLowerCase()} curtain.`,
+     bl:[["DET",a],["ADJ",it.n.toLowerCase()],["SUST","curtain"]],say:`A ${it.n.toLowerCase()} curtain.`},
+    {r:'SUSTANTIVO · COLOR',cls:'r-sust',d:'El color mismo como bloque base (objeto de la oración).',
+     ex:`I like ${it.n.toLowerCase()}.`,
+     bl:[["PPD","I"],["S.F.","like"],["SUST",it.n.toLowerCase()]],say:`I like ${it.n.toLowerCase()}.`},
+    Object.assign(use3(it),{cls:'r-obj'})
+  ];
+}
+
+/* ================= RENDER PODS + FILTROS ================= */
+const podGrid=document.getElementById('podGrid');
+const filRow=document.getElementById('filRow');
+const FILS=[["todos","🌈 TODOS"],["frutas","🍓 FRUTAS"],["verduras","🍆 VERDURAS"],["flores","🌸 FLORES"],["animales","🐟 ANIMALES"],["plantas","🌿 PLANTAS"],["objetos","💎 OBJETOS & MINERALES"]];
+FILS.forEach(([k,l],i)=>{
+  const b=document.createElement('button');
+  b.className='fil'+(i===0?' sel':'');b.textContent=l;b.dataset.k=k;
+  b.onclick=()=>{tickSfx();
+    document.querySelectorAll('.fil').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');
+    document.querySelectorAll('.pod').forEach(p=>{
+      p.classList.toggle('hide',k!=='todos'&&p.dataset.g!==k);
+    });
+  };
+  filRow.appendChild(b);
+});
+ITEMS.forEach((it,i)=>{
+  const p=document.createElement('div');
+  p.className='pod reveal';p.style.setProperty('--pc',it.hex);p.dataset.g=GRUPO(it.tipo);
+  p.style.transitionDelay=(i%4)*0.06+'s';
+  p.innerHTML=`
+    <div class="sw"><span class="emo">${it.emo}</span></div>
+    <div class="body">
+      <div class="nm">${it.n}</div>
+      <div class="hex">${it.hex}</div>
+      <div class="es">${it.esObj} · ${it.esCol}</div>
+      <div class="tags">
+        <span class="mini-tag t-tipo">${it.tipo}</span>
+        <span class="mini-tag t-adj">ADJ</span>
+        <span class="mini-tag t-sust">SUST</span>
+      </div>
+    </div>`;
+  p.onclick=()=>{select(it,i,p);};
+  podGrid.appendChild(p);
+  io.observe(p);
+});
+
+/* ================= BANCO DE ANÁLISIS ================= */
+const bench=document.getElementById('bench');
+const bSwatch=document.getElementById('bSwatch');
+const bName=document.getElementById('bName');
+const bMeta=document.getElementById('bMeta');
+const bEs=document.getElementById('bEs');
+const bInsight=document.getElementById('bInsight');
+const bUses=document.getElementById('bUses');
+function blkHTML(bl){
+  const cls={PPD:'ppd','S.F.':'sf',SUST:'sust',ADJ:'adj',DET:'det'};
+  return bl.map((b,k)=>(k>0?'<span class="plus">+</span>':'')+
+    `<span class="lb ${cls[b[0]]||'sust'}"><span class="lt">${b[0]}</span>${b[1]}</span>`).join('');
+}
+function select(it,i,pod){
+  document.querySelectorAll('.pod').forEach(x=>x.classList.remove('sel'));
+  pod.classList.add('sel');
+  magicSfx(i);
+  speak(it.n);
+  bench.style.setProperty('--bc',it.hex);
+  bSwatch.classList.remove('idle');
+  bSwatch.style.setProperty('--bc',it.hex);
+  bSwatch.textContent=it.emo;
+  bName.textContent=it.n;
+  bMeta.innerHTML=`<span class="bm">HEX <b>${it.hex}</b></span><span class="bm">CUERPO <b>${it.tipo}</b></span><span class="bm">VIDAS <b>ADJ + SUST</b></span>`;
+  bEs.innerHTML=`Como color: <b>${it.esCol}</b> · Como cuerpo real: <b>${it.esObj}</b>`;
+  bInsight.style.display='block';
+  bInsight.innerHTML='🧠 '+INSIGHT[it.tipo];
+  const us=usesOf(it);
+  bUses.innerHTML=us.map((u,k)=>`
+    <div class="use-card">
+      <button class="say-btn" data-say="${(u.say||u.ex).replace(/"/g,'&quot;')}">🔊 Oír</button>
+      <span class="use-role ${u.cls}">${u.r}</span>
+      <p>${u.d}</p>
+      <div class="use-ex">“${u.ex}”</div>
+      <div class="blk-row">${blkHTML(u.bl)}</div>
+    </div>`).join('');
+  bench.classList.remove('zap');void bench.offsetWidth;bench.classList.add('zap');
+  if(innerWidth<860)bench.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+bench.addEventListener('click',e=>{
+  const b=e.target.closest('.say-btn');
+  if(!b)return;
+  tickSfx();
+  speak(b.dataset.say);
+});
+</script>
+</body>
+</html>
