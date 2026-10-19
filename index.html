@@ -92,8 +92,8 @@ h2 .grad-gold{background:linear-gradient(90deg,var(--gold),var(--magenta));-webk
 .callout strong{color:var(--txt)}
 .callout.shock{border-color:rgba(255,47,214,.5);background:linear-gradient(140deg,rgba(255,47,214,.09),rgba(11,15,36,.6));animation:shockglow 3.4s infinite}
 @keyframes shockglow{0%,100%{box-shadow:0 0 22px rgba(255,47,214,.1)}50%{box-shadow:0 0 44px rgba(255,47,214,.28)}}
-.callout.cy{border-color:rgba(0,229,255,.4);background:linear-gradient(140deg,rgba(0,229,255,.07),rgba(11,15,36,.6)}
-.callout.gold{border-color:rgba(255,201,77,.45);background:linear-gradient(140deg,rgba(255,201,77,.08),rgba(11,15,36,.6)}
+.callout.cy{border-color:rgba(0,229,255,.4);background:linear-gradient(140deg,rgba(0,229,255,.07),rgba(11,15,36,.6));}
+.callout.gold{border-color:rgba(255,201,77,.45);background:linear-gradient(140deg,rgba(255,201,77,.08),rgba(11,15,36,.6));}
 
 /* LEGENDA DE BLOQUES */
 .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
@@ -138,7 +138,7 @@ h2 .grad-gold{background:linear-gradient(90deg,var(--gold),var(--magenta));-webk
 .pod:hover{transform:translateY(-6px);border-color:var(--pc);
   box-shadow:0 14px 40px color-mix(in srgb,var(--pc) 22%,transparent),0 0 22px color-mix(in srgb,var(--pc) 32%,transparent)}
 .pod.sel{border-color:var(--pc);box-shadow:0 0 0 1px var(--pc),0 0 32px color-mix(in srgb,var(--pc) 42%,transparent)}
-.pod.hide{display:none}
+.pod.hide{display:none !important}
 
 /* BANCO DE ANÁLISIS */
 .bench{margin-top:34px;border-radius:22px;border:1px solid var(--line);background:linear-gradient(160deg,#0d1230,#070a1a);padding:32px;position:relative;overflow:hidden;
@@ -376,7 +376,8 @@ function magicSfx(i){
   const lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.value=2600;
   dl.connect(lp);lp.connect(fb);fb.connect(dl);
   const wet=c.createGain();wet.gain.value=.5;dl.connect(wet);wet.connect(c.destination);
-  [[1,.09,1.6],[2,.035,1.3],[3.01,.015,1.0]].forEach(([m,v,dur])=>{
+  [[1,.09,1.6],[2,.035,1.3],[3.01,.015,1.0]].forEach(function(cfg){
+    const m=cfg[0],v=cfg[1],dur=cfg[2];
     const o=c.createOscillator(),g=c.createGain();
     o.type='sine';o.frequency.value=f*m;
     g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+.02);
@@ -424,7 +425,7 @@ const ITEMS=[
  {n:"Banana",hex:"#F3E372",emo:"🍌",tipo:"FRUTA",esObj:"banana",esCol:"amarillo banana"},
  {n:"Lemon",hex:"#F6EC4E",emo:"🍋",tipo:"FRUTA",esObj:"limón",esCol:"amarillo limón"},
  {n:"Honeydew",hex:"#D8E3A0",emo:"🍈",tipo:"FRUTA",esObj:"melón honeydew",esCol:"verde melón"},
- {n:"Lime",hex:"#86C232",emo:"🍋🟩",tipo:"FRUTA",esObj:"lima",esCol:"verde lima"},
+ {n:"Lime",hex:"#86C232",emo:"🍋",tipo:"FRUTA",esObj:"lima",esCol:"verde lima"},
  {n:"Clover",hex:"#4C9A44",emo:"🍀",tipo:"PLANTA",esObj:"trébol",esCol:"verde trébol"},
  {n:"Fern",hex:"#61A744",emo:"🌿",tipo:"PLANTA",esObj:"helecho",esCol:"verde helecho"},
  {n:"Moss",hex:"#3D7A35",emo:"🌱",tipo:"PLANTA",esObj:"musgo",esCol:"verde musgo"},
@@ -459,17 +460,17 @@ function use3(it){
     "PLANTA":["touch",'the '+it.n.toLowerCase()]
   }[it.tipo];
   return {r:'SUSTANTIVO · '+it.tipo,d:'El cuerpo real del espécimen como bloque base.',
-    ex:`I ${map[0]} ${map[1]}.`,bl:[["PPD","I"],["S.F.",map[0]],["SUST",map[1]]]};
+    ex:'I '+map[0]+' '+map[1]+'.',bl:[["PPD","I"],["S.F.",map[0]],["SUST",map[1]]]};
 }
 function usesOf(it){
   const a=art(it.n);
   return [
     {r:'ADJETIVO · COLOR',cls:'r-adj',d:'Calidad estática antes del sustantivo: describe sin conjugarse.',
-     ex:`${a.charAt(0).toUpperCase()+a.slice(1)} ${it.n.toLowerCase()} curtain.`,
-     bl:[["DET",a],["ADJ",it.n.toLowerCase()],["SUST","curtain"]],say:`A ${it.n.toLowerCase()} curtain.`},
+     ex:a.charAt(0).toUpperCase()+a.slice(1)+' '+it.n.toLowerCase()+' curtain.',
+     bl:[["DET",a],["ADJ",it.n.toLowerCase()],["SUST","curtain"]],say:'A '+it.n.toLowerCase()+' curtain.'},
     {r:'SUSTANTIVO · COLOR',cls:'r-sust',d:'El color mismo como bloque base (objeto de la oración).',
-     ex:`I like ${it.n.toLowerCase()}.`,
-     bl:[["PPD","I"],["S.F.","like"],["SUST",it.n.toLowerCase()]],say:`I like ${it.n.toLowerCase()}.`},
+     ex:'I like '+it.n.toLowerCase()+'.',
+     bl:[["PPD","I"],["S.F.","like"],["SUST",it.n.toLowerCase()]],say:'I like '+it.n.toLowerCase()+'.'},
     Object.assign(use3(it),{cls:'r-obj'})
   ];
 }
@@ -478,34 +479,34 @@ function usesOf(it){
 const podGrid=document.getElementById('podGrid');
 const filRow=document.getElementById('filRow');
 const FILS=[["todos","🌈 TODOS"],["frutas","🍓 FRUTAS"],["verduras","🍆 VERDURAS"],["flores","🌸 FLORES"],["animales","🐟 ANIMALES"],["plantas","🌿 PLANTAS"],["objetos","💎 OBJETOS & MINERALES"]];
-FILS.forEach(([k,l],i)=>{
+FILS.forEach(function(f,i){
   const b=document.createElement('button');
-  b.className='fil'+(i===0?' sel':'');b.textContent=l;b.dataset.k=k;
-  b.onclick=()=>{tickSfx();
+  b.className='fil'+(i===0?' sel':'');b.textContent=f[1];b.dataset.k=f[0];
+  b.onclick=function(){tickSfx();
     document.querySelectorAll('.fil').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');
     document.querySelectorAll('.pod').forEach(p=>{
-      p.classList.toggle('hide',k!=='todos'&&p.dataset.g!==k);
+      p.classList.toggle('hide',f[0]!=='todos'&&p.dataset.g!==f[0]);
     });
   };
   filRow.appendChild(b);
 });
-ITEMS.forEach((it,i)=>{
+ITEMS.forEach(function(it,i){
   const p=document.createElement('div');
   p.className='pod reveal';p.style.setProperty('--pc',it.hex);p.dataset.g=GRUPO(it.tipo);
   p.style.transitionDelay=(i%4)*0.06+'s';
-  p.innerHTML=`
-    <div class="sw"><span class="emo">${it.emo}</span></div>
-    <div class="body">
-      <div class="nm">${it.n}</div>
-      <div class="hex">${it.hex}</div>
-      <div class="es">${it.esObj} · ${it.esCol}</div>
-      <div class="tags">
-        <span class="mini-tag t-tipo">${it.tipo}</span>
-        <span class="mini-tag t-adj">ADJ</span>
-        <span class="mini-tag t-sust">SUST</span>
-      </div>
-    </div>`;
-  p.onclick=()=>{select(it,i,p);};
+  p.innerHTML=
+    '<div class="sw"><span class="emo">'+it.emo+'</span></div>'+
+    '<div class="body">'+
+      '<div class="nm">'+it.n+'</div>'+
+      '<div class="hex">'+it.hex+'</div>'+
+      '<div class="es">'+it.esObj+' · '+it.esCol+'</div>'+
+      '<div class="tags">'+
+        '<span class="mini-tag t-tipo">'+it.tipo+'</span>'+
+        '<span class="mini-tag t-adj">ADJ</span>'+
+        '<span class="mini-tag t-sust">SUST</span>'+
+      '</div>'+
+    '</div>';
+  p.onclick=function(){select(it,i,p);};
   podGrid.appendChild(p);
   io.observe(p);
 });
@@ -520,8 +521,8 @@ const bInsight=document.getElementById('bInsight');
 const bUses=document.getElementById('bUses');
 function blkHTML(bl){
   const cls={PPD:'ppd','S.F.':'sf',SUST:'sust',ADJ:'adj',DET:'det'};
-  return bl.map((b,k)=>(k>0?'<span class="plus">+</span>':'')+
-    `<span class="lb ${cls[b[0]]||'sust'}"><span class="lt">${b[0]}</span>${b[1]}</span>`).join('');
+  return bl.map(function(b,k){return (k>0?'<span class="plus">+</span>':'')+
+    '<span class="lb '+(cls[b[0]]||'sust')+'"><span class="lt">'+b[0]+'</span>'+b[1]+'</span>';}).join('');
 }
 function select(it,i,pod){
   document.querySelectorAll('.pod').forEach(x=>x.classList.remove('sel'));
@@ -533,23 +534,24 @@ function select(it,i,pod){
   bSwatch.style.setProperty('--bc',it.hex);
   bSwatch.textContent=it.emo;
   bName.textContent=it.n;
-  bMeta.innerHTML=`<span class="bm">HEX <b>${it.hex}</b></span><span class="bm">CUERPO <b>${it.tipo}</b></span><span class="bm">VIDAS <b>ADJ + SUST</b></span>`;
-  bEs.innerHTML=`Como color: <b>${it.esCol}</b> · Como cuerpo real: <b>${it.esObj}</b>`;
+  bMeta.innerHTML='<span class="bm">HEX <b>'+it.hex+'</b></span><span class="bm">CUERPO <b>'+it.tipo+'</b></span><span class="bm">VIDAS <b>ADJ + SUST</b></span>';
+  bEs.innerHTML='Como color: <b>'+it.esCol+'</b> · Como cuerpo real: <b>'+it.esObj+'</b>';
   bInsight.style.display='block';
   bInsight.innerHTML='🧠 '+INSIGHT[it.tipo];
   const us=usesOf(it);
-  bUses.innerHTML=us.map((u,k)=>`
-    <div class="use-card">
-      <button class="say-btn" data-say="${(u.say||u.ex).replace(/"/g,'&quot;')}">🔊 Oír</button>
-      <span class="use-role ${u.cls}">${u.r}</span>
-      <p>${u.d}</p>
-      <div class="use-ex">“${u.ex}”</div>
-      <div class="blk-row">${blkHTML(u.bl)}</div>
-    </div>`).join('');
+  bUses.innerHTML=us.map(function(u){
+    return '<div class="use-card">'+
+      '<button class="say-btn" data-say="'+(u.say||u.ex).replace(/"/g,'&quot;')+'">🔊 Oír</button>'+
+      '<span class="use-role '+u.cls+'">'+u.r+'</span>'+
+      '<p>'+u.d+'</p>'+
+      '<div class="use-ex">“'+u.ex+'”</div>'+
+      '<div class="blk-row">'+blkHTML(u.bl)+'</div>'+
+    '</div>';
+  }).join('');
   bench.classList.remove('zap');void bench.offsetWidth;bench.classList.add('zap');
   if(innerWidth<860)bench.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
-bench.addEventListener('click',e=>{
+bench.addEventListener('click',function(e){
   const b=e.target.closest('.say-btn');
   if(!b)return;
   tickSfx();
